@@ -1,0 +1,232 @@
+[
+    {
+        "id": "d921b4a56b316c46",
+        "type": "tab",
+        "label": "Program",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ae3cfb1a745fadfc",
+        "type": "inject",
+        "z": "d921b4a56b316c46",
+        "name": "repeat every 10 sec",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "T",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 640,
+        "wires": [
+            [
+                "d283ae5a108b2f27",
+                "9e9124c369b15846",
+                "382b4a2c3c558fa7"
+            ]
+        ]
+    },
+    {
+        "id": "9e9124c369b15846",
+        "type": "grove-air-quality-sensor",
+        "z": "d921b4a56b316c46",
+        "name": "Air Quality",
+        "port": "0",
+        "x": 450,
+        "y": 700,
+        "wires": [
+            [
+                "2201a5645b62a440"
+            ]
+        ]
+    },
+    {
+        "id": "d283ae5a108b2f27",
+        "type": "grove-temperature-humidity-sensor-sht3x",
+        "z": "d921b4a56b316c46",
+        "name": "Temperature and Humidity",
+        "model": "0x44",
+        "x": 460,
+        "y": 520,
+        "wires": [
+            [
+                "7cf5e18f3acc1184"
+            ]
+        ]
+    },
+    {
+        "id": "382b4a2c3c558fa7",
+        "type": "join",
+        "z": "d921b4a56b316c46",
+        "name": "wait for sensors and combine",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": ";",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "4",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 920,
+        "y": 640,
+        "wires": [
+            [
+                "2074f60e5061fe27"
+            ]
+        ]
+    },
+    {
+        "id": "f5079f7824659842",
+        "type": "grove-oled-display-128x64",
+        "z": "d921b4a56b316c46",
+        "name": "OLED Display",
+        "x": 540,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "7cf5e18f3acc1184",
+        "type": "function",
+        "z": "d921b4a56b316c46",
+        "name": "transform to string",
+        "func": "var temp = msg.payload.temperature;\nvar humidity = msg.payload.humidity;\nmsg.payload = temp + \";\" + humidity;\nmsg.topic = \"TH\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 520,
+        "wires": [
+            [
+                "382b4a2c3c558fa7"
+            ]
+        ]
+    },
+    {
+        "id": "d04396b5742d30e4",
+        "type": "file",
+        "z": "d921b4a56b316c46",
+        "name": "append to csv",
+        "filename": "/home/pi/db.csv",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 540,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2074f60e5061fe27",
+        "type": "function",
+        "z": "d921b4a56b316c46",
+        "name": "csv_formating",
+        "func": "var payload = msg.payload;\nvar th = payload.TH.split(';');\nvar temperature = th[0];\nvar humidity = th[1];\n\nvar date = new Date(payload.T);\nvar formattedDate = date.toLocaleString('it-IT', { timeZone: 'Europe/Rome', hour12: false }).replace(',', '');\n\n// Format: \"dd/mm/yyyy hh:mm:ss\"\nmsg.payload = formattedDate + \",\" + temperature + \",\" + humidity + \",\" + payload.Q + \",\" + payload.C + \"\\n\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 840,
+        "wires": [
+            [
+                "d04396b5742d30e4",
+                "f5079f7824659842"
+            ]
+        ]
+    },
+    {
+        "id": "12f3fb3b4c564123",
+        "type": "serial in",
+        "z": "d921b4a56b316c46",
+        "name": "GPS",
+        "serial": "079bbed2825b504f",
+        "x": 430,
+        "y": 600,
+        "wires": [
+            [
+                "f19ba024c4e9908c"
+            ]
+        ]
+    },
+    {
+        "id": "f19ba024c4e9908c",
+        "type": "function",
+        "z": "d921b4a56b316c46",
+        "name": "decode_and_format",
+        "func": "const en_debug = false;  // true for debugging\n\nconst patterns = [\n    /^\\$GNGGA/,\n    /\\d{6}\\.\\d+/,\n    /\\d{4}\\.\\d+/,\n    /[NS]/,\n    /\\d{5}\\.\\d+/,\n    /[EW]/,\n    /[012]/,\n    /\\d+/,\n    /\\d*\\.\\d*/,\n    /-?\\d*\\.\\d*/,\n    /M/\n];\n\nfunction debug(msg) {\n    if (en_debug) node.warn(msg); // debuuuuugg\n}\n\nfunction convertToDecimalDegrees(value, direction) {\n    const degrees = Math.floor(value / 100);\n    const minutes = value % 100;\n    let decimalDegrees = degrees + minutes / 60;\n    if (direction === 'S' || direction === 'W') decimalDegrees = -decimalDegrees;\n    return decimalDegrees;\n}\n\nfunction validate(line) { //find correct line\n    const gga = line.split(\",\");\n    if (gga.length < 15) return false;\n\n    for (let i = 0; i < patterns.length; i++) {\n        if (!patterns[i].test(gga[i])) return false;\n    }\n\n    try {\n        const latitude = convertToDecimalDegrees(parseFloat(gga[2]), gga[3]);\n        const longitude = convertToDecimalDegrees(parseFloat(gga[4]), gga[5]);\n        return `${latitude}, ${longitude}`;\n    } catch {\n        return false;\n    }\n}\n\nif (msg.payload) {\n    const lines = msg.payload.toString().trim().split('\\n');\n    for (let line of lines) {\n        line = line.trim();\n        if (line.startsWith(\"$GNGGA\")) {\n            const validatedData = validate(line);\n            if (validatedData) {\n                debug(`Valid data: ${validatedData}`);\n                msg.payload = validatedData;\n                msg.topic = \"C\"\n                node.send(msg);\n                return;\n            }\n        }\n    }\n    debug(\"No valid $GNGGA data found.\");\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 600,
+        "wires": [
+            [
+                "382b4a2c3c558fa7"
+            ]
+        ]
+    },
+    {
+        "id": "2201a5645b62a440",
+        "type": "function",
+        "z": "d921b4a56b316c46",
+        "name": "give topic",
+        "func": "msg.topic = \"Q\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 700,
+        "wires": [
+            [
+                "382b4a2c3c558fa7"
+            ]
+        ]
+    },
+    {
+        "id": "079bbed2825b504f",
+        "type": "serial-port",
+        "serialport": "/dev/ttyS0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    }
+]

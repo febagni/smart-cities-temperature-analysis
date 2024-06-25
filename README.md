@@ -1,6 +1,16 @@
-# Smart Cities Project
+# SMART BUILDINGS, NEIGHBORHOODS, AND CITIES
+
+## Milan: A Sensor-Based Study - Analyzing the Air Temperature Variation in Giardini Indro Montanelli and Surroundings
 
 This project focuses on the analysis of various datasets related to smart cities. The goal is to utilize data analytics to derive insights and contribute towards the development of smarter urban areas.
+
+This project was developed for the course *Smart Buildings, Neighborhoods and Cities – 057689* from Politecnico di Milano as part of the Academic Year of 2023/24. The group is composed by the students:
+
+- Bagni, Felipe (MSc. in Computer Engineering) 
+- Hüntemann, Lisa Marie (MSc. In Building Architecture) 
+- F. Petrucci, Marcos V. (MSc. in Computer Engineering)
+
+And the course is ministrated by Prof. Andrea Antonio Caragliu, Prof. Luca Mottola.
 
 ## Project Structure
 
@@ -8,37 +18,34 @@ The project is organized into several directories and Jupyter notebooks, each se
 
 ### Directories
 
-- **raw**: Contains raw datasets used for analysis.
-- **filtered**: Contains filtered datasets after initial processing.
-- **temperature-maps**: Includes visualizations related to temperature data.
-- **path-maps**: Contains visualizations related to path analysis.
-- **maps**: Other miscellaneous maps generated during analysis.
+- **[raw](./raw/)**: Contains raw datasets used for analysis.
+- **[filtered](./filtered/)**: Support directory which contains the filtered datasets.
+- **[support-ipynbs](./support-ipynbs/)**: Includes supporting Jupyter notebooks for the analysis.
+- **[maps](maps)**: Contains visualizations related to the points of data collection.
+- **[temperature-maps](temperature-maps)**: Includes visualizations related to temperature data.
+- **[path-maps](path-maps)**: Contains visualizations related to path taken during the data collection process.
+- **[docs](docs)**: Report and supporting slides for class presentation.
 
 ### Jupyter Notebooks
 
-- **db1-analysis.ipynb**: Data analysis and insights from Database 1.
-- **db2-analysis.ipynb**: Data analysis and insights from Database 2.
-- **db3-analysis.ipynb**: Data analysis and insights from Database 3.
-- **db4-analysis.ipynb**: Data analysis and insights from Database 4.
-- **unified-analysis.ipynb**: Combined analysis incorporating data from all databases.
+- **[data_analysis.ipynb](data_analysis.ipynb)**: Main notebook for overall data analysis and insights.
+- **[support-ipynbs/db1-analysis.ipynb](support-ipynbs/db1-analysis.ipynb)**: Support data analysis and insights from Database 1.
+- **[support-ipynbs/db2-analysis.ipynb](support-ipynbs/db2-analysis.ipynb)**: Support data  analysis and insights from Database 2.
+- **[support-ipynbs/db3-analysis.ipynb](support-ipynbs/db3-analysis.ipynb)**: Support data  analysis and insights from Database 3.
+- **[support-ipynbs/db4-analysis.ipynb](support-ipynbs/db4-analysis.ipynb)**: Support data  analysis and insights from Database 4.
 
-## Overview
+### Node-RED Flow
 
-### Data Sources
+The Node-RED flow for this project is provided in the [`node_red_flow.json`](node_red_flow.json) file. This flow includes configurations for collecting and processing data from different sensors used in the project.
 
-The raw data used in this project is stored in the `raw` directory. Each dataset corresponds to a different aspect of smart cities, such as traffic patterns, temperature data, etc.
+Additional palettes used in the flow:
+- `node-red-contrib-grove-air-quality-sensor`
+- `node-red-contrib-grove-base-hat`
+- `node-red-node-serialport`
 
-### Analysis Overview
+### Project Report
 
-- **Database 1**: Focuses on analyzing traffic patterns and identifying peak congestion times.
-- **Database 2**: Involves the study of environmental data, particularly temperature variations.
-- **Database 3**: Examines public transportation usage and efficiency.
-- **Database 4**: Investigates energy consumption patterns in urban areas.
-- **Unified Analysis**: Integrates insights from all databases to provide a comprehensive view of smart city dynamics.
-
-### Visualizations
-
-The `maps`, `temperature-maps`, and `path-maps` directories contain various visualizations generated during the analysis, helping to illustrate the insights derived from the data.
+The [project report](./docs/Bagni_Huentemann_Petrucci.pdf) provides an in-depth analysis of the study, highlighting key findings and trends. The report also features the context of the project, explanations of the work developed, visualizations, insights and explanations. With this, it offers a comprehensive view of the factors influencing temperature in the park.
 
 ## Contributing
 
@@ -46,5 +53,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
+This project is licensed under the MIT License. See the [`LICENSE`](LICENSE) file for details.
